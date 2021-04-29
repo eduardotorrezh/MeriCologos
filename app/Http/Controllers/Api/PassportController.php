@@ -92,4 +92,9 @@ class PassportController extends Controller
             return response()->json($th->getMessage(), 400);
         }
     }
+
+    public function test(Request $request)
+    {
+        return "a";
+    }
 }
