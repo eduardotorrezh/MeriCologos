@@ -30,19 +30,19 @@ class PermissionSeeder extends Seeder
         $deleteBO = Permission::create(['name' => 'branch_offices.delete']);
         $showBO = Permission::create(['name' => 'branch_offices.show']);
 
-        $admin = Role::findOrFail(1);
-        $psycho = Role::findOrFail(2);
-        $client = Role::findOrFail(3);
+        $global_admin = Role::findOrFail(1);
+        $staff = Role::findOrFail(2);
+        $local_admin = Role::findOrFail(3);
 
-        $admin->syncPermissions([
+        $global_admin->syncPermissions([
             $test, $createUser, $updateUser, $deleteUser, $showUser, 
             $indexBO, $createBO, $updateBO, $deleteBO, $showBO, 
         ]);
-        $psycho->syncPermissions([
+        $local_admin->syncPermissions([
             $test, $createUser, $showUser, 
             $indexBO, $showBO, 
         ]);
-        $client->syncPermissions([
+        $staff->syncPermissions([
             $test, $showUser, 
             $indexBO, $showBO, 
         ]);
