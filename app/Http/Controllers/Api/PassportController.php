@@ -54,30 +54,73 @@ class PassportController extends Controller
     {
         DB::beginTransaction();
         try {
-
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'last_name' => 'required',
                 'email' => 'required|unique:users|email',
                 'password' => 'required',
             ]);
-
             if($validator->fails()){
                 return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);
             }
-
-            $user = User::create($request->all());
-            $data['token'] =  $user->createToken('users')->accessToken;
+            $user = User::create($request->all())->assignRole('admin');
             $data['user'] = $user;
-
             DB::commit();
+            
             return $this->successResponse($data, Response::HTTP_CREATED);
-
         } catch (\Throwable $th) {
             DB::rollback();
             return response($th->getMessage(), 400);
         }
+    }
 
+    public function storeDoctor(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validator = Validator::make($request->all(), [
+                'branch_office_id' => 'required',
+                'name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required|unique:users|email',
+                'password' => 'required',
+            ]);
+            if($validator->fails()){
+                return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);
+            }
+            $user = User::create($request->all())->assignRole('doctor');
+            $data['user'] = $user;
+            DB::commit();
+            return response($data, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response($th->getMessage(), 400);
+        }
+    }
+
+    public function storePatient(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validator = Validator::make($request->all(), [
+                'branch_office_id' => 'required',
+                'name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required|unique:users|email',
+                'password' => 'required',
+            ]);
+            if($validator->fails()){
+                return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);
+            }
+            $user = User::create($request->all())->assignRole('patient');
+            // $data['token'] =  $user->createToken('users')->accessToken;
+            $data['user'] = $user;
+            DB::commit();
+            return response($data, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response($th->getMessage(), 400);
+        }
     }
 
     public function authUserInfo(Request $request)

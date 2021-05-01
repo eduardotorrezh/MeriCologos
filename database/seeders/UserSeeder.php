@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
                 "password"=>"pass1234",
                 "branch_office_id"=>1
             ]
-        )->assignRole('global_admin');
+        )->assignRole('admin');
 
         User::create(
             [
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
                 "password"=>"pass1234",
                 "branch_office_id"=>1
             ]
-        )->assignRole('global_admin');
+        )->assignRole('admin');
 
         User::create(
             [
@@ -42,6 +42,27 @@ class UserSeeder extends Seeder
                 "password"=>"pass1234",
                 "branch_office_id"=>2
             ]
-        )->assignRole('local_admin');
+        )->assignRole('admin');
+
+        User::create(
+            [
+                "name"=>"Doctor",
+                "last_name"=>"Doc",
+                "email"=>"doc@doc.com",
+                "password"=>"pass1234",
+                "branch_office_id"=>1
+            ]
+        )->assignRole('doctor');
+
+        User::create(
+            [
+                "name"=>"Patient",
+                "last_name"=>"Pat",
+                "email"=>"pat@pat.com",
+                "password"=>"pass1234",
+                "branch_office_id"=>1
+            ]
+        )->assignRole('patient');
+
     }
 }

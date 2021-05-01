@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->unsignedBigInteger('branch_office_id')->unsigned();
+            $table->unsignedBigInteger('branch_office_id')->unsigned()->default(1);
             $table->foreign('branch_office_id')->references('id')->on('branch_offices')->onDelete('cascade');
             $table->boolean('status')->default(true);
             $table->rememberToken();
