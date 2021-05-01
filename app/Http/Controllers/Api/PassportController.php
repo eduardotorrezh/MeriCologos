@@ -11,10 +11,11 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Validator;
 use DB;
+use App\Traits\ApiResponser;
 
 class PassportController extends Controller
 {
-
+    use ApiResponser;
     // public function __construct()
     // {
     //       $this->middleware('auth');
@@ -41,7 +42,7 @@ class PassportController extends Controller
             }
 
             $token = $user->createToken('users')->accessToken;
-            return response()->json(['token' => $token],200);
+            return $this->successResponse(['token' => $token]);
 
         }catch(\Exception $e){
             // return $e;
@@ -70,7 +71,7 @@ class PassportController extends Controller
             $data['user'] = $user;
 
             DB::commit();
-            return response($data, Response::HTTP_CREATED);
+            return $this->successResponse($data, Response::HTTP_CREATED);
 
         } catch (\Throwable $th) {
             DB::rollback();

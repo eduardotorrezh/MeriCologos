@@ -8,10 +8,10 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Validator;
 use DB;
-
+use App\Traits\ApiResponser;
 class BranchOfficeController extends Controller
 {
-
+    use ApiResponser;
     /**
      * Display a listing of the resource.
      *
@@ -19,12 +19,21 @@ class BranchOfficeController extends Controller
      */
     public function index()
     {
+        return $this->successResponse(BranchOffice::where("status",true)->get());
         
-        return response(
-            [
-                'branchOffices' => BranchOffice::where("status",true)->get(), 
-            ], 200
-        );
+
+        
+    }
+    public function indexPaginate()
+    {
+        
+        try {
+            return $this->successResponse(BranchOffice::where('status',"=",true)->paginate(10));
+        } catch (\Throwable $th) {
+            return $this->errorResponse("error", 500);
+        }
+
+        
     }
 
     /**
@@ -50,7 +59,7 @@ class BranchOfficeController extends Controller
             }
             $branchOffice = BranchOffice::create($request->all());
             DB::commit();
-            return response($branchOffice, Response::HTTP_CREATED);
+            return $this->successResponse($branchOffice, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
             return response($th->getMessage(), 400);
@@ -85,7 +94,7 @@ class BranchOfficeController extends Controller
         try {
             $branchOffice->update( $request->all() );
             DB::commit();
-            return response($branchOffice, 200);
+            return $this->successResponse($branchOffice, 200);
         } catch (\Throwable $th) {
             DB::rollback();
             return response($th->getMessage(), 400);
@@ -104,7 +113,7 @@ class BranchOfficeController extends Controller
         try {
             $branchOffice->update( ["status"=>false] );
             DB::commit();
-            return response($branchOffice, 200); 
+            return $this->successResponse($branchOffice, 200); 
         } catch (\Throwable $th) {
             DB::rollback();
             return response($th->getMessage(), 400);
