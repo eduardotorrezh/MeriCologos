@@ -6,6 +6,7 @@ use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -39,6 +40,33 @@ class UserController extends Controller
     public function show(User $user)
     {
         try {
+            return response($user, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            return response($th->getMessage(), 400);
+        }
+    }
+
+    public function admins()
+    {
+        try {
+            return response($user, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            return response($th->getMessage(), 400);
+        }
+    }
+    public function patients()
+    {
+        try {
+            $user = User::role('patient')->get();
+            return response($user, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            return response($th->getMessage(), 400);
+        }
+    }
+    public function doctors()
+    {
+        try {
+            $user = User::role('doctor')->get();
             return response($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return response($th->getMessage(), 400);
