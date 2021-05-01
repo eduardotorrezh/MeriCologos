@@ -15,8 +15,8 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $global_admin = Role::create(['name' => 'global_admin']);
-        $staff = Role::create(['name' => 'staff']);
-        $local_admin = Role::create(['name' => 'local_admin']);
+        $admin = Role::create(['name' => 'admin']);
+        $doctor = Role::create(['name' => 'doctor']);
+        $patient = Role::create(['name' => 'patient']);
     }
 }
