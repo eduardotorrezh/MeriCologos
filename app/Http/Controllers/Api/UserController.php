@@ -12,9 +12,11 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Validator;
 use DB;
-
+use App\Traits\ApiResponser;
 class UserController extends Controller
 {
+
+    use ApiResponser;
     public function updateUser(Request $request, User $user)
     {
         DB::beginTransaction();
@@ -30,7 +32,7 @@ class UserController extends Controller
             }
             $user->update($request->all());
             DB::commit();
-            return response($user, Response::HTTP_CREATED);
+            return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
             return response($th->getMessage(), 400);
@@ -40,7 +42,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         try {
-            return response($user, Response::HTTP_CREATED);
+            return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return response($th->getMessage(), 400);
         }
@@ -49,7 +51,8 @@ class UserController extends Controller
     public function admins()
     {
         try {
-            return response($user, Response::HTTP_CREATED);
+            $user = User::role('admin')->with(['branchOffice'])->paginate(10);
+            return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return response($th->getMessage(), 400);
         }
@@ -57,8 +60,8 @@ class UserController extends Controller
     public function patients()
     {
         try {
-            $user = User::role('patient')->get();
-            return response($user, Response::HTTP_CREATED);
+            $user = User::role('patient')->with(['branchOffice'])->paginate(10);
+            return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return response($th->getMessage(), 400);
         }
@@ -66,8 +69,8 @@ class UserController extends Controller
     public function doctors()
     {
         try {
-            $user = User::role('doctor')->get();
-            return response($user, Response::HTTP_CREATED);
+            $user = User::role('doctor')->with(['branchOffice'])->paginate(10);
+            return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return response($th->getMessage(), 400);
         }

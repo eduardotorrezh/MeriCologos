@@ -91,7 +91,7 @@ class PassportController extends Controller
             $user = User::create($request->all())->assignRole('doctor');
             $data['user'] = $user;
             DB::commit();
-            return response($data, Response::HTTP_CREATED);
+            return $this->successResponse($data, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
             return response($th->getMessage(), 400);
@@ -116,7 +116,7 @@ class PassportController extends Controller
             // $data['token'] =  $user->createToken('users')->accessToken;
             $data['user'] = $user;
             DB::commit();
-            return response($data, Response::HTTP_CREATED);
+            return $this->successResponse($data, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
             return response($th->getMessage(), 400);
