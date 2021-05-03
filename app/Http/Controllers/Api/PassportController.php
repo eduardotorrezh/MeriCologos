@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Specialty;
+use App\Models\DoctorWithSpecialty;
 use Validator;
 use DB;
 use App\Traits\ApiResponser;
@@ -89,7 +91,13 @@ class PassportController extends Controller
                 return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);
             }
             $user = User::create($request->all())->assignRole('doctor');
+            if($request->has('specialties')){
+                foreach ($request->specialties as $specialty_id) {
+                    DoctorWithSpecialty::create(["user_id"=>$user->id,"specialty_id"=>$specialty_id]);
+                }
+            }
             $data['user'] = $user;
+            $data['user']['specialties'] = Specialty::find($request->specialties);
             DB::commit();
             return $this->successResponse($data, Response::HTTP_CREATED);
         } catch (\Throwable $th) {

@@ -18,6 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::namespace('App\Http\Controllers\Api')->group(function (){
+
+    Route::post('/specialties','PassportController@login')->name('login');
+
     Route::post('/login','PassportController@login')->name('login');
     Route::post('/register','PassportController@store')->name('registerAdmin')->middleware(['auth:api','role_or_permission:admin|admin.store']);
     Route::post('/registerDoctor','PassportController@storeDoctor')->name('registerDoctor')->middleware(['auth:api','role_or_permission:admin|doctor.store']);
@@ -35,6 +38,12 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/branchOfficesPaginate','BranchOfficeController@indexPaginate')->name('branch_offices.indexPaginate')->middleware(['auth:api','role_or_permission:global_admin|branch_offices.index']);
     Route::put('/branchOffices/{branchOffice}','BranchOfficeController@update')->name('branch_offices.update')->middleware(['auth:api','role_or_permission:admin|branch_offices.update']);
     Route::delete('/branchOffices/{branchOffice}','BranchOfficeController@destroy')->name('branch_offices.destroy')->middleware(['auth:api','role_or_permission:admin|branch_offices.destroy']);
+
+    Route::get('/specialties','SpecialtyController@index')->name('specialties.index')->middleware(['auth:api','role_or_permission:admin|specialties.index']);
+    Route::post('/specialties','SpecialtyController@store')->name('specialties.store')->middleware(['auth:api','role_or_permission:admin|specialties.store']);
+    Route::get('/specialties/{specialty}','SpecialtyController@show')->name('specialties.index')->middleware(['auth:api','role_or_permission:admin|specialties.index']);
+    Route::put('/specialties/{specialty}','SpecialtyController@update')->name('specialties.update')->middleware(['auth:api','role_or_permission:admin|specialties.update']);
+    Route::delete('/specialties/{specialty}','SpecialtyController@destroy')->name('specialties.destroy')->middleware(['auth:api','role_or_permission:admin|specialties.destroy']);
 
     Route::post('/authUserInfo','PassportController@authUserInfo')->name('authUserInfo')->middleware('auth:api');
     Route::post('/test','PassportController@test')->name('test')->middleware(['auth:api','role_or_permission:admin|testpermissions']);

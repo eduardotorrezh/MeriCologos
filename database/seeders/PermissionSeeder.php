@@ -35,6 +35,12 @@ class PermissionSeeder extends Seeder
         $deleteBO = Permission::create(['name' => 'branch_offices.delete']);
         $showBO = Permission::create(['name' => 'branch_offices.show']);
 
+        $indexSpecialty = Permission::create(['name' => 'specialties.index']);
+        $createSpecialty = Permission::create(['name' => 'specialties.store']);
+        $updateSpecialty = Permission::create(['name' => 'specialties.update']);
+        $deleteSpecialty = Permission::create(['name' => 'specialties.delete']);
+        $showSpecialty = Permission::create(['name' => 'specialties.show']);
+
         $admin = Role::findOrFail(1);
         $doctor = Role::findOrFail(2);
         $patient = Role::findOrFail(3);
@@ -42,12 +48,14 @@ class PermissionSeeder extends Seeder
         $admin->syncPermissions([
             $test, $createAdmin, $createDoc, $createPatient, $updateUser, $deleteUser, $showUser, 
             $indexBO, $createBO, $updateBO, $deleteBO, $showBO, 
-            $indexAdmins, $indexPatients, $indexDoctors 
+            $indexAdmins, $indexPatients, $indexDoctors,
+            $indexSpecialty, $createSpecialty, $updateSpecialty, $deleteSpecialty, $showSpecialty, 
         ]);
 
         $doctor->syncPermissions([
             $test, $createPatient, $showUser, $updateUser,
-            $indexBO, $showBO, $indexPatients, $indexDoctors 
+            $indexBO, $showBO, $indexPatients, $indexDoctors,
+            $indexSpecialty, $showSpecialty
         ]);
         
         $patient->syncPermissions([
