@@ -86,6 +86,7 @@ class PassportController extends Controller
                 'last_name' => 'required',
                 'email' => 'required|unique:users|email',
                 'password' => 'required',
+                'phone' => 'required',
             ]);
             if($validator->fails()){
                 return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);
@@ -116,6 +117,7 @@ class PassportController extends Controller
                 'last_name' => 'required',
                 'email' => 'required|unique:users|email',
                 'password' => 'required',
+                'phone' => 'required',
             ]);
             if($validator->fails()){
                 return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);

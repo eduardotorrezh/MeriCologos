@@ -13,6 +13,11 @@ class DatesInfo extends Model
         'assistance','paid'
     ];
 
+    protected $casts = [
+        'assistance' => 'boolean',
+        'paid' => 'boolean',
+    ];
+
     protected $hidden = [
         'created_at',
         'updated_at'

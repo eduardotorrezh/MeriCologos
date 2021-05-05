@@ -48,14 +48,8 @@ class DateController extends Controller
                 ], 422
             );
         }
-
-
-
-
-
         DB::beginTransaction();
         try {
-
             $init_date = getDate(strtotime($request->init_hour))["hours"];
             $end_date = getDate(strtotime($request->end_hour))["hours"];
 
@@ -67,10 +61,27 @@ class DateController extends Controller
                 $date = Date::create($request->all());
             }
             DB::commit();
-            return $this->successResponse($date, Response::HTTP_CREATED);
+            return $this->successResponse($DI, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+        }
+    }
+
+    public function setAbsence(Request $request, DatesInfo $datesInfo)
+    {
+        DB::beginTransaction();
+        try {
+            $datesInfo->update(["assistance"=>false]);
+            if($datesInfo->assistance){
+                $firstDate = $datesInfo->Dates->first();
+                $firstDate->patient->update(["absences"=>$firstDate->patient->absences+1]);
+            }
+            DB::commit();
+            return $this->successResponse($datesInfo, 200);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorResponse($th->getMessage(), 400);
         }
     }
 }

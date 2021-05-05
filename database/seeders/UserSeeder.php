@@ -20,7 +20,8 @@ class UserSeeder extends Seeder
                 "last_name"=>"Torres",
                 "email"=>"ed@ed.com",
                 "password"=>"pass1234",
-                "branch_office_id"=>1
+                "branch_office_id"=>1,
+                "phone"=>"9613521645"
             ]
         )->assignRole('admin');
 
@@ -30,7 +31,8 @@ class UserSeeder extends Seeder
                 "last_name"=>"Guerra",
                 "email"=>"dani@dani.com",
                 "password"=>"pass1234",
-                "branch_office_id"=>1
+                "branch_office_id"=>1,
+                "phone"=>"9613521646"
             ]
         )->assignRole('admin');
 
@@ -40,7 +42,8 @@ class UserSeeder extends Seeder
                 "last_name"=>"Admin",
                 "email"=>"admin@admin.com",
                 "password"=>"pass1234",
-                "branch_office_id"=>2
+                "branch_office_id"=>2,
+                "phone"=>"9613521647"
             ]
         )->assignRole('admin');
 
@@ -50,7 +53,8 @@ class UserSeeder extends Seeder
                 "last_name"=>"Doc",
                 "email"=>"doc@doc.com",
                 "password"=>"pass1234",
-                "branch_office_id"=>1
+                "branch_office_id"=>1,
+                "phone"=>"9613521648"
             ]
         )->assignRole('doctor');
 
@@ -60,7 +64,8 @@ class UserSeeder extends Seeder
                 "last_name"=>"Pat",
                 "email"=>"pat@pat.com",
                 "password"=>"pass1234",
-                "branch_office_id"=>1
+                "branch_office_id"=>1,
+                "phone"=>"9613521649"
             ]
         )->assignRole('patient');
 

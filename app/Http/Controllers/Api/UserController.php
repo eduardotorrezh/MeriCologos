@@ -29,6 +29,7 @@ class UserController extends Controller
                 'name' => 'required',
                 'last_name' => 'required',
                 'email' => 'required|email',
+                'phone' => 'required',
             ]);
             if($validator->fails()){
                 return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);

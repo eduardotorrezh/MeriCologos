@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             UserSeeder::class,
             DatesSeeder::class,
-            ShiftsSeeder::class
+            ShiftsSeeder::class,
+            SpecialtySeeder::class,
         ]);
     }
 }

@@ -21,7 +21,10 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->unsignedBigInteger('branch_office_id')->unsigned()->default(1);
             $table->foreign('branch_office_id')->references('id')->on('branch_offices')->onDelete('cascade');
+            $table->string('phone');
             $table->boolean('status')->default(true);
+            $table->boolean('active')->default(true);
+            $table->integer('absences')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });
