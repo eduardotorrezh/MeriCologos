@@ -35,6 +35,12 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/branchOfficesPaginate','BranchOfficeController@indexPaginate')->name('branch_offices.indexPaginate')->middleware(['auth:api','role_or_permission:global_admin|branch_offices.index']);
     Route::put('/branchOffices/{branchOffice}','BranchOfficeController@update')->name('branch_offices.update')->middleware(['auth:api','role_or_permission:admin|branch_offices.update']);
     Route::delete('/branchOffices/{branchOffice}','BranchOfficeController@destroy')->name('branch_offices.destroy')->middleware(['auth:api','role_or_permission:admin|branch_offices.destroy']);
+    
+    
+    Route::get('/shift','ShiftController@index')->name('date.index');
+    Route::get('/date','DateController@index')->name('date.index');
+    Route::post('/date','DateController@store')->name('date.store');
+
 
     Route::post('/authUserInfo','PassportController@authUserInfo')->name('authUserInfo')->middleware('auth:api');
     Route::post('/test','PassportController@test')->name('test')->middleware(['auth:api','role_or_permission:admin|testpermissions']);
