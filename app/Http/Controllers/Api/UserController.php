@@ -6,17 +6,20 @@ use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DoctorWithSpecialty;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponser;
 use App\Models\User;
 use Validator;
 use DB;
-use App\Traits\ApiResponser;
+
 class UserController extends Controller
 {
 
     use ApiResponser;
+
     public function updateUser(Request $request, User $user)
     {
         DB::beginTransaction();
@@ -31,6 +34,18 @@ class UserController extends Controller
                 return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);
             }
             $user->update($request->all());
+            //Si es doctor recibe sus especialidades.
+            $role = $user->getRoleNames();
+            if($role[0] == "doctor"){
+                if($request->has('specialties')){
+                    DoctorWithSpecialty::where("user_id",$user->id)->delete();
+                    foreach ($request->specialties as $specialty_id) {
+                        DoctorWithSpecialty::create(["user_id"=>$user->id,"specialty_id"=>$specialty_id]);
+                    }
+                }
+                DB::commit();
+                return User::where("id",$user->id)->with("doctorWithSpecialties.specialty")->first();
+            }
             DB::commit();
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
@@ -42,6 +57,10 @@ class UserController extends Controller
     public function show(User $user)
     {
         try {
+            $role = $user->getRoleNames();
+            if($role[0] == "doctor"){
+                return User::where("id",$user->id)->with("doctorWithSpecialties.specialty")->first();
+            }
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return response($th->getMessage(), 400);
@@ -69,7 +88,7 @@ class UserController extends Controller
     public function doctors()
     {
         try {
-            $user = User::role('doctor')->with(['branchOffice'])->paginate(10);
+            $user = User::role('doctor')->with(['branchOffice','doctorWithSpecialties.specialty'])->paginate(10);
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return response($th->getMessage(), 400);
