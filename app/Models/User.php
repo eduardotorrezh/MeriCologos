@@ -61,6 +61,6 @@ class User extends Authenticatable
     }
 
     public function dates(){
-        return $this->hasMany(Date::class,'patient_id');
+        return $this->hasMany(Date::class,'patient_id','id');
     }
 }

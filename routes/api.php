@@ -25,7 +25,8 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::post('/registerPatient','PassportController@storePatient')->name('registerPatient')->middleware(['auth:api','role_or_permission:admin|patient.store']);
     Route::put('/users/{user}','UserController@updateUser')->name('updateUser')->middleware(['auth:api','role_or_permission:admin|users.update']);
     Route::get('/users/{user}','UserController@show')->name('showUser')->middleware(['auth:api','role_or_permission:admin|users.show']);
-    
+    Route::get('/userDates/{user}','UserController@userDates')->name('patientDates');
+
     Route::get('/doctors','UserController@doctors')->name('indexDoctors')->middleware(['auth:api','role_or_permission:admin|doctors.index']);
     Route::get('/patients','UserController@patients')->name('indexPatients')->middleware(['auth:api','role_or_permission:admin|patients.index']);
     Route::get('/admins','UserController@admins')->name('indexAdmins')->middleware(['auth:api','role_or_permission:admin|admins.index']);
