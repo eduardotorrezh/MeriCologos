@@ -73,7 +73,7 @@ class UserController extends Controller
     public function medicalHistory(Request $request)
     {
         try {
-            $user = User::role('patient')->with(['dates'])->get();
+            $user = User::role('patient')->with(['dates.dates_info','dates.dates_info','dates.patient','dates.doctor'])->get();
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(), 400);
@@ -84,9 +84,9 @@ class UserController extends Controller
     public function medicalHistoryByUser(User $user)
     {
         try {
-            return User::where('id',$user->id)->with(['dates'])->first();
+            $data = User::where('id',$user->id)->with(['dates.dates_info','dates.dates_info','dates.patient','dates.doctor'])->first();
 
-            return $this->successResponse(User::findOrFail(5)->with(['dates'])->first(), Response::HTTP_CREATED);
+            return $this->successResponse($data, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(), 400);
             // return response($th->getMessage(), 400);

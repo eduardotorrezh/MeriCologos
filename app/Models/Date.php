@@ -31,7 +31,7 @@ class Date extends Model
     }
 
     public function dates_info(){
-        return $this->belongsTo(DatesInfo::class);
+        return $this->belongsTo(DatesInfo::class,'dates_infos_id');
     }
 
 }

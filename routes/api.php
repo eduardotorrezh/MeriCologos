@@ -30,8 +30,8 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/doctors','UserController@doctors')->name('indexDoctors')->middleware(['auth:api','role_or_permission:admin|doctors.index']);
     Route::get('/patients','UserController@patients')->name('indexPatients')->middleware(['auth:api','role_or_permission:admin|patients.index']);
     Route::get('/admins','UserController@admins')->name('indexAdmins')->middleware(['auth:api','role_or_permission:admin|admins.index']);
-    Route::get('/medicalHistory','UserController@medicalHistory');
-    Route::get('/medicalHistory/{user}','UserController@medicalHistoryByUser');
+    Route::get('/medicalHistory','UserController@medicalHistory')->name('medicalHistory.all')->middleware(['auth:api','role_or_permission:admin|medicalHistory.all']);
+    Route::get('/medicalHistory/{user}','UserController@medicalHistoryByUser')->name('medicalHistory.byUser')->middleware(['auth:api','role_or_permission:admin|medicalHistory.byUser']);
 
     
     Route::get('/branchOffices','BranchOfficeController@index')->name('branch_offices.index')->middleware(['auth:api','role_or_permission:admin|branch_offices.index']);

@@ -45,6 +45,9 @@ class PermissionSeeder extends Seeder
         $storeDate = Permission::create(['name' => 'date.store']);
         $indexDate = Permission::create(['name' => 'date.index']);
 
+        $medicalHistoryall = Permission::create(['name' => 'medicalHistory.all']);
+        $medicalHistorybyUser = Permission::create(['name' => 'medicalHistory.byUser']);
+
 
         $admin = Role::findOrFail(1);
         $doctor = Role::findOrFail(2);
@@ -55,14 +58,16 @@ class PermissionSeeder extends Seeder
             $indexBO, $createBO, $updateBO, $deleteBO, $showBO, 
             $indexAdmins, $indexPatients, $indexDoctors,
             $indexSpecialty, $createSpecialty, $updateSpecialty, $deleteSpecialty, $showSpecialty, 
-            $absenceDate, $storeDate, $indexDate
+            $absenceDate, $storeDate, $indexDate,
+            $medicalHistoryall, $medicalHistorybyUser,
         ]);
 
         $doctor->syncPermissions([
             $test, $createPatient, $showUser, $updateUser,
             $indexBO, $showBO, $indexPatients, $indexDoctors,
             $indexSpecialty, $showSpecialty,
-            $absenceDate, $storeDate, $indexDate
+            $absenceDate, $storeDate, $indexDate,
+            $medicalHistoryall, $medicalHistorybyUser,
         ]);
         
         $patient->syncPermissions([
