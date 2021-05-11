@@ -95,4 +95,23 @@ class UserController extends Controller
             return response($th->getMessage(), 400);
         }
     }
+
+    public function userDates(User $user)
+    {
+        try {
+            return $this->successResponse($user->dates, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            return response($th->getMessage(), 400);
+        }
+    }
+
+    public function activepatients(User $user)
+    {
+        try {
+            return $this->successResponse($user->dates, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            return response($th->getMessage(), 400);
+        }
+    }
+
 }

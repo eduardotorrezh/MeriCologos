@@ -22,7 +22,6 @@ class DateController extends Controller
     public function index()
     {
         return $this->successResponse(Date::all());
-        
     }
 
 
@@ -50,15 +49,23 @@ class DateController extends Controller
         }
         DB::beginTransaction();
         try {
+
+
+
             $init_date = getDate(strtotime($request->init_hour))["hours"];
             $end_date = getDate(strtotime($request->end_hour))["hours"];
-
             $DI = DatesInfo::create();
-
+            $request["date"] = $request->init_hour;
             $request["dates_infos_id"] = $DI->id;
-            for ($i=$init_date; $i < $end_date; $i = $i + 0.5) { 
-                $request["shift"] = $i *2;
-                $date = Date::create($request->all());
+            for ($i=$init_date; $i < $end_date; $i = $i + 0.5) {
+                if(count(Date::where("shift_id",$i * 2)->where("date",date("Y-m-d",strtotime($request->init_hour )))->where("doctor_id",$request->doctor_id)->get() ) != 0 ){
+                    DB::rollback();
+                    return $this->errorResponse('este turno ya esta ocupado', 400);
+                }else{
+                    $request["shift_id"] = $i *2;
+                    $i *2;
+                    $date = Date::create($request->all());
+                }
             }
             DB::commit();
             return $this->successResponse($DI, Response::HTTP_CREATED);

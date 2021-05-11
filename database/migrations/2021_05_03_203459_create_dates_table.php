@@ -23,6 +23,7 @@ class CreateDatesTable extends Migration
             $table->foreign('shift_id')->references('id')->on('shifts')->onDelete('cascade');
             $table->unsignedBigInteger('dates_infos_id')->unsigned()->default(1);
             $table->foreign('dates_infos_id')->references('id')->on('dates_infos')->onDelete('cascade');
+            $table->date('date');
             $table->timestamps();
         });
     }
