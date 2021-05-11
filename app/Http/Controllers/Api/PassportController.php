@@ -72,7 +72,8 @@ class PassportController extends Controller
             return $this->successResponse($data, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 
@@ -103,7 +104,8 @@ class PassportController extends Controller
             return $this->successResponse($data, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 
@@ -129,7 +131,8 @@ class PassportController extends Controller
             return $this->successResponse($data, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 
@@ -143,7 +146,8 @@ class PassportController extends Controller
                 return response()->json("Usuario no identificado.", 404);
             }
         }catch (\Throwable $th) {
-            return response()->json($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response()->json($th->getMessage(), 400);
         }
     }
 

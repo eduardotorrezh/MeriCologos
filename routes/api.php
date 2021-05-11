@@ -29,7 +29,10 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/doctors','UserController@doctors')->name('indexDoctors')->middleware(['auth:api','role_or_permission:admin|doctors.index']);
     Route::get('/patients','UserController@patients')->name('indexPatients')->middleware(['auth:api','role_or_permission:admin|patients.index']);
     Route::get('/admins','UserController@admins')->name('indexAdmins')->middleware(['auth:api','role_or_permission:admin|admins.index']);
+    Route::get('/medicalHistory','UserController@medicalHistory');
+    Route::get('/medicalHistory/{user}','UserController@medicalHistoryByUser');
 
+    
     Route::get('/branchOffices','BranchOfficeController@index')->name('branch_offices.index')->middleware(['auth:api','role_or_permission:admin|branch_offices.index']);
     Route::post('/branchOffices','BranchOfficeController@store')->name('branch_offices.store')->middleware(['auth:api','role_or_permission:admin|branch_offices.store']);
     Route::get('/branchOffices/{branchOffice}','BranchOfficeController@show')->name('branch_offices.index')->middleware(['auth:api','role_or_permission:admin|branch_offices.index']);

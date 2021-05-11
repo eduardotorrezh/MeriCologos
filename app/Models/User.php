@@ -59,4 +59,8 @@ class User extends Authenticatable
     public function doctorWithSpecialties(){
         return $this->hasMany(DoctorWithSpecialty::class);
     }
+
+    public function dates(){
+        return $this->hasMany(Date::class,'patient_id');
+    }
 }
