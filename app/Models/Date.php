@@ -27,11 +27,11 @@ class Date extends Model
     }
 
     public function shift(){
-        return $this->belongsTo(User::class,'shift_id');
+        return $this->belongsTo(Shifts::class,'shift_id');
     }
 
     public function dates_info(){
-        return $this->belongsTo(DatesInfo::class);
+        return $this->belongsTo(DatesInfo::class,'dates_infos_id');
     }
 
 }

@@ -45,6 +45,10 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::post('/setAbsence/{datesInfo}','DateController@setAbsence')->name('date.absence')->middleware(['auth:api','role_or_permission:admin|date.absence']);
 
 
+    Route::get('/reportDates/{id}','ReportController@reportsDates');
+    Route::get('/gains','ReportController@gains');
+
+
     Route::get('/specialties','SpecialtyController@index')->name('specialties.index')->middleware(['auth:api','role_or_permission:admin|specialties.index']);
     Route::post('/specialties','SpecialtyController@store')->name('specialties.store')->middleware(['auth:api','role_or_permission:admin|specialties.store']);
     Route::get('/specialties/{specialty}','SpecialtyController@show')->name('specialties.index')->middleware(['auth:api','role_or_permission:admin|specialties.index']);
