@@ -30,7 +30,8 @@ class BranchOfficeController extends Controller
         try {
             return $this->successResponse(BranchOffice::where('status',"=",true)->paginate(10));
         } catch (\Throwable $th) {
-            return $this->errorResponse("error", 500);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return $this->errorResponse("error", 500);
         }
 
         
@@ -62,7 +63,8 @@ class BranchOfficeController extends Controller
             return $this->successResponse($branchOffice, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 
@@ -97,7 +99,8 @@ class BranchOfficeController extends Controller
             return $this->successResponse($branchOffice, 200);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 
@@ -116,7 +119,8 @@ class BranchOfficeController extends Controller
             return $this->successResponse($branchOffice, 200); 
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 }

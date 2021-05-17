@@ -51,7 +51,8 @@ class UserController extends Controller
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 
@@ -64,7 +65,31 @@ class UserController extends Controller
             }
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
+        }
+    }
+
+    public function medicalHistory(Request $request)
+    {
+        try {
+            $user = User::role('patient')->with(['dates.dates_info','dates.dates_info','dates.patient','dates.doctor'])->get();
+            return $this->successResponse($user, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
+        }
+    }
+
+    public function medicalHistoryByUser(User $user)
+    {
+        try {
+            $data = User::where('id',$user->id)->with(['dates.dates_info','dates.dates_info','dates.patient','dates.doctor'])->first();
+
+            return $this->successResponse($data, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 
@@ -74,7 +99,8 @@ class UserController extends Controller
             $user = User::role('admin')->with(['branchOffice'])->paginate(10);
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
     public function patients()
@@ -83,7 +109,8 @@ class UserController extends Controller
             $user = User::role('patient')->with(['branchOffice'])->paginate(10);
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
     public function doctors()
@@ -92,7 +119,8 @@ class UserController extends Controller
             $user = User::role('doctor')->with(['branchOffice','doctorWithSpecialties.specialty'])->paginate(10);
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 

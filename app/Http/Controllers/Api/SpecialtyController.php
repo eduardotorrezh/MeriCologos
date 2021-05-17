@@ -50,7 +50,8 @@ class SpecialtyController extends Controller
             return $this->successResponse($specialty, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
         }
     }
 
@@ -85,7 +86,8 @@ class SpecialtyController extends Controller
             return $this->successResponse($specialty, 200);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 
@@ -104,7 +106,8 @@ class SpecialtyController extends Controller
             return $this->successResponse($specialty, 200); 
         } catch (\Throwable $th) {
             DB::rollback();
-            return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
         }
     }
 }
