@@ -17,6 +17,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/', function () {
+    return "Mericologos API";
+    // return view('test');
+});
+
 Route::namespace('App\Http\Controllers\Api')->group(function (){
 
     Route::post('/login','PassportController@login')->name('login');
@@ -46,6 +52,8 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/date','DateController@index')->name('date.index')->middleware(['auth:api','role_or_permission:admin|date.index']);
     Route::post('/date','DateController@store')->name('date.store')->middleware(['auth:api','role_or_permission:admin|date.store']);
     Route::post('/setAbsence/{datesInfo}','DateController@setAbsence')->name('date.absence')->middleware(['auth:api','role_or_permission:admin|date.absence']);
+    Route::get('/paypal/status/{saleInfo}', 'DateController@payPalStatus');
+    Route::get('/paypal/status', 'PaymentController@payPalStatus');
 
 
     Route::get('/reportDates/{id}','ReportController@reportsDates');

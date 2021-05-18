@@ -13,16 +13,41 @@ use Illuminate\Http\Request;
 use Validator;
 use DB;
 
+use PayPal\Api\Payer;
+use PayPal\Api\Item;
+use PayPal\Api\ItemList;
+use PayPal\Api\Amount;
+use PayPal\Api\Transaction;
+use PayPal\Api\RedirectUrls;
+use PayPal\Api\Payment;
+use PayPal\Api\PaymentExecution;
+use PayPal\Auth\OAuthTokenCredential;
+use \PayPal\Rest\ApiContext;
+use PayPal\Exception\PayPalConnectionException;
+use Config;
+
 use App\Traits\ApiResponser;
 
 class DateController extends Controller
 {
     use ApiResponser;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
+    private $apiContext;
+
+    public function __construct()
+    {
+        $payPalConfig = Config::get('paypal');
+
+        $this->apiContext = new ApiContext(
+            new OAuthTokenCredential(
+                $payPalConfig['client_id'],
+                $payPalConfig['secret']
+            )
+        );
+
+        $this->apiContext->setConfig($payPalConfig['settings']);
+    }
+
     public function index()
     {
         return $this->successResponse(Date::all());
@@ -42,6 +67,7 @@ class DateController extends Controller
             'doctor_id' => 'required',
             'init_hour' => 'required',
             'end_hour' => 'required',
+            'payment_type' => 'required',
         ]);
         if($validator->fails()){
             return response(
@@ -80,13 +106,47 @@ class DateController extends Controller
                     $date = Date::create($request->all());
                 }
             }
+
             //se intenta hacer el pago
-
-            //avanza si el pago se pudo realizar
-
-
             //pay_id es la cadena que regresa paypal al hacer el pago de manera exitosa
-            $SI = SaleInfo::create(["pay_id"=>"pay-1234"]);
+            $SI = SaleInfo::create();
+
+            if($request->payment_type == "paypal"){
+                $payer = new Payer();
+                $payer->setPaymentMethod('paypal');
+
+                $pay_amount = new Amount();
+                $pay_amount->setTotal(strval($amount));
+                $pay_amount->setCurrency('MXN');
+                
+                $transaction = new Transaction();
+                $transaction->setAmount($pay_amount);
+                $transaction->setDescription('Cita');
+
+                $callbackUrl = url('/api/paypal/status');
+                $callbackUrlAccept = url('/api/paypal/status/'.$SI->id);
+
+                $redirectUrls = new RedirectUrls();
+                $redirectUrls->setReturnUrl($callbackUrlAccept)
+                    ->setCancelUrl($callbackUrl);
+
+                $payment = new Payment();
+                $payment->setIntent('sale')
+                    ->setPayer($payer)
+                    ->setTransactions(array($transaction))
+                    ->setRedirectUrls($redirectUrls);
+                
+                try {
+                    $payment->create($this->apiContext);
+                    // dd( $payment->getApprovalLink() );
+                    DB::commit();
+                    return $this->successResponse( $payment->getApprovalLink() , 200 );
+                    return redirect()->away( $payment->getApprovalLink() );
+                } catch (PayPalConnectionException $ex) {
+                    echo $ex->getData();
+                }
+
+            }
 
             $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
             DB::commit();
@@ -115,5 +175,37 @@ class DateController extends Controller
             DB::rollback();
             return $this->errorResponse($th->getMessage(), 400);
         }
+    }
+
+    public function payPalStatus(Request $request, SaleInfo $saleInfo)
+    {
+        $paymentId = $request->input('paymentId');
+        $payerId = $request->input('PayerID');
+        $token = $request->input('token');
+
+        if (!$paymentId || !$payerId || !$token) {
+            $status = 'Lo sentimos! El pago a través de PayPal no se pudo realizar ERR1.';
+            // return redirect('/paypal/failed')->with(compact('status'));
+            return $this->errorResponse($status, 400);
+        }
+
+        $payment = Payment::get($paymentId, $this->apiContext);
+
+        $execution = new PaymentExecution();
+        $execution->setPayerId($payerId);
+
+        /** Execute the payment **/
+        $result = $payment->execute($execution, $this->apiContext);
+
+        if ($result->getState() === 'approved') {
+            $saleInfo->update(["pay_id"=>$request->input('paymentId')]);
+            $status = 'Gracias! El pago a través de PayPal se ha ralizado correctamente.';
+            return  $this->successResponse($status);
+            // return redirect('/results')->with(compact('status'));
+        }
+
+        $status = 'Lo sentimos! El pago a través de PayPal no se pudo realizar ERR2.';
+        return $this->errorResponse($status, 400);
+        // return redirect('/results')->with(compact('status'));
     }
 }
