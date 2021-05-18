@@ -84,9 +84,16 @@ class DateController extends Controller
 
             $init_date = getDate(strtotime($request->init_hour))["hours"];
             $end_date = getDate(strtotime($request->end_hour))["hours"];
-
             //crea la informacion de la cita
+            if(getDate(strtotime($request->init_hour))["minutes"] !=0 ){
+                $init_hour = $init_hour + 0.5;
+            }
+            if(getDate(strtotime($request->end_hour))["minutes"] !=0 ){
+                $end_date = $end_date + 0.5;
+            }
             $DI = DatesInfo::create();
+
+
 
 
             $request["date"] = $request->init_hour;
