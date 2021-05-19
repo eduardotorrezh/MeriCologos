@@ -13,7 +13,8 @@
         "laravel/passport": "^10.1",
         "laravel/tinker": "^2.5",
         "paypal/rest-api-sdk-php": "^1.14",
-        "spatie/laravel-permission": "^4.0"
+        "spatie/laravel-permission": "^4.0",
+        "stripe/stripe-php": "^7.78"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

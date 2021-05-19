@@ -26,6 +26,10 @@ use \PayPal\Rest\ApiContext;
 use PayPal\Exception\PayPalConnectionException;
 use Config;
 
+use Stripe\Stripe;
+use Stripe\Customer;
+use Stripe\Charge;
+
 use App\Traits\ApiResponser;
 
 class DateController extends Controller
@@ -145,19 +149,48 @@ class DateController extends Controller
                 
                 try {
                     $payment->create($this->apiContext);
-                    // dd( $payment->getApprovalLink() );
+                    $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
                     DB::commit();
                     return $this->successResponse( $payment->getApprovalLink() , 200 );
-                    return redirect()->away( $payment->getApprovalLink() );
+                    // return redirect()->away( $payment->getApprovalLink() );
                 } catch (PayPalConnectionException $ex) {
                     echo $ex->getData();
                 }
 
             }
+            
+            if($request->payment_type == "stripe"){
 
-            $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
-            DB::commit();
-            return $this->successResponse($DI, Response::HTTP_CREATED);
+                try {
+                    $stripeConfig = Config::get('stripe');
+                    Stripe::setApiKey($stripeConfig['secret']);
+                    
+                    $customer = Customer::create(array(
+                        'email' => $request->stripeEmail,
+                        'source' => $request->stripeToken,
+                        'address'=>$request->stripeAddress,
+        
+                    ));
+
+                    $charge = Charge::create(array(
+                        'customer' => $customer->id,
+                        'amount' => $amount*100,
+                        'currency' => 'mxn'
+                    ));
+                    $SI->update(["pay_id"=>$charge->id,"payment_type"=>"stripe"]);
+                    $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
+                    DB::commit();
+                    return $this->successResponse( $payment->getApprovalLink() , 200 );
+                    
+                } catch (\Exception $ex) {
+                    return $ex->getMessage();
+                }
+
+            }
+            
+            // $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
+            // DB::commit();
+            // return $this->successResponse($DI, Response::HTTP_CREATED);
             //nota para el dani del futuro, pensar que pasaria en caso de que fallara en este fraccmento de codigo despues de hacer el pago en paypal
 
 
@@ -205,7 +238,7 @@ class DateController extends Controller
         $result = $payment->execute($execution, $this->apiContext);
 
         if ($result->getState() === 'approved') {
-            $saleInfo->update(["pay_id"=>$request->input('paymentId')]);
+            $saleInfo->update(["pay_id"=>$request->input('paymentId',"payment_type"=>"paypal")]);
             $status = 'Gracias! El pago a través de PayPal se ha ralizado correctamente.';
             return  $this->successResponse($status);
             // return redirect('/results')->with(compact('status'));

@@ -11,7 +11,7 @@ class SaleInfo extends Model
 
     
     protected $fillable = [
-        'pay_id',
+        'pay_id',"payment_type"
     ];
 
     protected $hidden = [

@@ -16,6 +16,8 @@ class CreateSaleInfosTable extends Migration
         Schema::create('sale_infos', function (Blueprint $table) {
             $table->id();
             $table->string('pay_id')->nullable();
+            $table->string('payment_type')->nullable();
+
             $table->timestamps();
         });
     }
