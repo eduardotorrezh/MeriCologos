@@ -238,7 +238,7 @@ class DateController extends Controller
         $result = $payment->execute($execution, $this->apiContext);
 
         if ($result->getState() === 'approved') {
-            $saleInfo->update(["pay_id"=>$request->input('paymentId',"payment_type"=>"paypal")]);
+            $saleInfo->update(["pay_id"=>$request->paymentId,"payment_type"=>"paypal"]);
             $status = 'Gracias! El pago a través de PayPal se ha ralizado correctamente.';
             return  $this->successResponse($status);
             // return redirect('/results')->with(compact('status'));
