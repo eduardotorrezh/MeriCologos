@@ -27,6 +27,7 @@ class User extends Authenticatable
         'email',
         'password',
         'branch_office_id',
+        "status_patient",
         'status'
     ];
 
