@@ -71,6 +71,7 @@ class DateController extends Controller
             'doctor_id' => 'required',
             'init_hour' => 'required',
             'end_hour' => 'required',
+            'amount' => 'required',
             'payment_type' => 'required',
         ]);
         if($validator->fails()){
@@ -85,7 +86,7 @@ class DateController extends Controller
         try {
 
 
-
+            $amount = $request->amount;
             $init_date = getDate(strtotime($request->init_hour))["hours"];
             $end_date = getDate(strtotime($request->end_hour))["hours"];
             //crea la informacion de la cita
@@ -102,13 +103,12 @@ class DateController extends Controller
 
             //crea los turnos que ocupara la cita y valida que esos turnos esten disponibles
             //calcula el costo de la cita
-            $amount = 0;
             for ($i=$init_date; $i < $end_date; $i = $i + 0.5) {
                 if(count(Date::where("shift_id",$i * 2)->where("date",date("Y-m-d",strtotime($request->init_hour )))->where("doctor_id",$request->doctor_id)->get() ) != 0 ){
                     DB::rollback();
                     return $this->errorResponse('este turno ya esta ocupado', 400);
                 }else{
-                    $amount = $amount + 100;
+                    // $amount = $amount + 100;
                     $request["shift_id"] = $i *2;
                     $i *2;
                     $date = Date::create($request->all());

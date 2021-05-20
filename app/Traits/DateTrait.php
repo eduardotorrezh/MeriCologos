@@ -25,7 +25,6 @@ trait DateTrait
 
 
                 }else{
-                    
                     array_push($dates,["shiftInit"=> $shiftTemp,"shiftEnd"=> $results[$key - 1]["shift"],  "dates_info"=> $results[$key - 1]["dates_info"],"patient"=>$results[$key - 1]["patient"],"doctor"=>$results[$key - 1]["doctor"], "date"=> $results[$key - 1]["date"]]);
                     $patient_id = $value["patient_id"];
                     $doctor_id = $value["doctor_id"];
