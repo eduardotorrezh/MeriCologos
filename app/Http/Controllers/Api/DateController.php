@@ -97,9 +97,6 @@ class DateController extends Controller
             }
             $DI = DatesInfo::create();
 
-
-
-
             $request["date"] = $request->init_hour;
             $request["dates_infos_id"] = $DI->id;
 
@@ -180,7 +177,7 @@ class DateController extends Controller
                     $SI->update(["pay_id"=>$charge->id,"payment_type"=>"stripe"]);
                     $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
                     DB::commit();
-                    return $this->successResponse( $payment->getApprovalLink() , 200 );
+                    return $this->successResponse( "Venta realizada con éxito" , 200 );
                     
                 } catch (\Exception $ex) {
                     return $ex->getMessage();
