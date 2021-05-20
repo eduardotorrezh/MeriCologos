@@ -72,6 +72,9 @@ class DateController extends Controller
             'init_hour' => 'required',
             'end_hour' => 'required',
             'amount' => 'required',
+            'service' => 'required',
+            'payed' => 'required',
+            'estado' => 'required',
             'payment_type' => 'required',
         ]);
         if($validator->fails()){
@@ -171,7 +174,7 @@ class DateController extends Controller
 
                     $charge = Charge::create(array(
                         'customer' => $customer->id,
-                        'amount' => $amount*100,
+                        'amount' => $amount,
                         'currency' => 'mxn'
                     ));
                     $SI->update(["pay_id"=>$charge->id,"payment_type"=>"stripe"]);

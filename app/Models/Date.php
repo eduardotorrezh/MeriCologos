@@ -10,7 +10,7 @@ class Date extends Model
     use HasFactory;
 
     protected $fillable = [
-        'patient_id','doctor_id','shift_id','dates_infos_id','date'
+        'patient_id','doctor_id','shift_id','dates_infos_id','date','service','estado','payed'
     ];
 
     protected $hidden = [

@@ -24,6 +24,9 @@ class CreateDatesTable extends Migration
             $table->unsignedBigInteger('dates_infos_id')->unsigned()->default(1);
             $table->foreign('dates_infos_id')->references('id')->on('dates_infos')->onDelete('cascade');
             $table->date('date');
+            $table->string('service');
+            $table->boolean('payed');
+            $table->string('estado');
             $table->timestamps();
         });
     }
