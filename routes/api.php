@@ -25,6 +25,9 @@ Route::get('/', function () {
 
 Route::namespace('App\Http\Controllers\Api')->group(function (){
 
+    Route::post('/date','DateController@store');
+    Route::get('/date','DateController@index');
+
     Route::post('/login','PassportController@login')->name('login');
     Route::post('/register','PassportController@store')->name('registerAdmin')->middleware(['auth:api','role_or_permission:admin|admin.store']);
     Route::post('/registerDoctor','PassportController@storeDoctor')->name('registerDoctor')->middleware(['auth:api','role_or_permission:admin|doctor.store']);
@@ -49,8 +52,7 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     
     
     Route::get('/shift','ShiftController@index')->name('date.index')->middleware(['auth:api','role_or_permission:admin|date.index']);
-    Route::get('/date','DateController@index')->name('date.index')->middleware(['auth:api','role_or_permission:admin|date.index']);
-    Route::post('/date','DateController@store')->name('date.store')->middleware(['auth:api','role_or_permission:admin|date.store']);
+
     Route::post('/setAbsence/{datesInfo}','DateController@setAbsence')->name('date.absence')->middleware(['auth:api','role_or_permission:admin|date.absence']);
     Route::get('/paypal/status/{saleInfo}', 'DateController@payPalStatus');
     Route::get('/paypal/status', 'PaymentController@payPalStatus');

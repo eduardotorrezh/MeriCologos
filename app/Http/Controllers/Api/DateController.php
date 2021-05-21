@@ -10,6 +10,8 @@ use App\Models\SaleInfo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Twilio\Rest\Client;
+use GuzzleHttp\Exception\RequestException;
 use Validator;
 use DB;
 
@@ -57,6 +59,16 @@ class DateController extends Controller
         return $this->successResponse(Date::all());
     }
 
+    public function sendWhatsAppMessage(string $message, string $recipient)
+    {
+        $twilio_whatsapp_number = getenv('TWILIO_WHATSAPP_NUMBER');
+        $account_sid = getenv("TWILIO_SID");
+        $auth_token = getenv("TWILIO_AUTH_TOKEN");
+
+        $client = new Client($account_sid, $auth_token);
+        return $client->messages->create($recipient, array('from' => "whatsapp:$twilio_whatsapp_number", 'body' => $message));
+    }
+
 
         /**
      * Store a newly created resource in storage.
@@ -88,6 +100,8 @@ class DateController extends Controller
         try {
 
 
+
+
             $amount = $request->amount;
             $init_date = getDate(strtotime($request->init_hour))["hours"];
             $end_date = getDate(strtotime($request->end_hour))["hours"];
@@ -98,6 +112,8 @@ class DateController extends Controller
             if(getDate(strtotime($request->end_hour))["minutes"] !=0 ){
                 $end_date = $end_date + 0.5;
             }
+
+            
             $DI = DatesInfo::create();
 
             $request["date"] = $request->init_hour;
@@ -148,11 +164,14 @@ class DateController extends Controller
                 
                 try {
                     $payment->create($this->apiContext);
-                    $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
+                    $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> 2,"sale_info_id"=>$SI->id]);
                     DB::commit();
+                    $this->sendWhatsAppMessage("Se a agendado una nueva cita","whatsapp:+521".$DI->Dates[0]->doctor->phone);
+                    $this->sendWhatsAppMessage("Se a generado su link de pago".$payment->getApprovalLink(),"whatsapp:+521".$DI->Dates[0]->patient->phone);
                     return $this->successResponse( $payment->getApprovalLink() , 200 );
-                    // return redirect()->away( $payment->getApprovalLink() );
+                    //return redirect()->away( $payment->getApprovalLink() );
                 } catch (PayPalConnectionException $ex) {
+                    return $ex;
                     echo $ex->getData();
                 }
 
