@@ -164,7 +164,7 @@ class DateController extends Controller
                 
                 try {
                     $payment->create($this->apiContext);
-                    $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> 2,"sale_info_id"=>$SI->id]);
+                    $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
                     DB::commit();
                     $this->sendWhatsAppMessage("Se a agendado una nueva cita","whatsapp:+521".$DI->Dates[0]->doctor->phone);
                     $this->sendWhatsAppMessage("Se a generado su link de pago".$payment->getApprovalLink(),"whatsapp:+521".$DI->Dates[0]->patient->phone);
@@ -198,6 +198,8 @@ class DateController extends Controller
                     $SI->update(["pay_id"=>$charge->id,"payment_type"=>"stripe"]);
                     $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
                     DB::commit();
+                    $this->sendWhatsAppMessage("Se a agendado una nueva cita","whatsapp:+521".$DI->Dates[0]->doctor->phone);
+                    $this->sendWhatsAppMessage("Se a agendado su cita","whatsapp:+521".$DI->Dates[0]->patient->phone);
                     return $this->successResponse( "Venta realizada con éxito" , 200 );
                     
                 } catch (\Exception $ex) {
