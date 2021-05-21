@@ -73,7 +73,6 @@ class DateController extends Controller
             'end_hour' => 'required',
             'amount' => 'required',
             'service' => 'required',
-            'payed' => 'required',
             'estado' => 'required',
             'payment_type' => 'required',
         ]);
