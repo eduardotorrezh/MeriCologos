@@ -24,6 +24,8 @@ class CreateDatesTable extends Migration
             $table->unsignedBigInteger('dates_infos_id')->unsigned()->default(1);
             $table->foreign('dates_infos_id')->references('id')->on('dates_infos')->onDelete('cascade');
             $table->date('date');
+            $table->date('initial_date');
+            $table->date('end_date');
             $table->string('service');
             $table->boolean('payed')->nullable();
             $table->string('estado');
