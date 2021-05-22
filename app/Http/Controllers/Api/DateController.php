@@ -314,7 +314,6 @@ class DateController extends Controller
             $SI->update(["pay_id"=>$charge->id,"payment_type"=>"stripe"]);
             DB::commit();
             return $this->successResponse( "Venta realizada con éxito" , 200 );
-
         } catch (\Exception $ex) {
             return $ex->getMessage();
         }

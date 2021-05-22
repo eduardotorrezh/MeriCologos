@@ -28,6 +28,9 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::post('/date','DateController@store');
     Route::get('/date','DateController@index');
 
+    Route::post('/paypal/link/{sale}','DateController@paymentPaypal');
+    Route::post('/stripe/link/{sale}','DateController@paymentStripe');
+
     Route::post('/login','PassportController@login')->name('login');
     Route::post('/register','PassportController@store')->name('registerAdmin')->middleware(['auth:api','role_or_permission:admin|admin.store']);
     Route::post('/registerDoctor','PassportController@storeDoctor')->name('registerDoctor')->middleware(['auth:api','role_or_permission:admin|doctor.store']);
