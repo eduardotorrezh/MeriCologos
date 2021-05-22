@@ -140,28 +140,22 @@ class DateController extends Controller
             if($request->payment_type == "paypal"){
                 $payer = new Payer();
                 $payer->setPaymentMethod('paypal');
-
                 $pay_amount = new Amount();
                 $pay_amount->setTotal(strval($amount));
                 $pay_amount->setCurrency('MXN');
-                
                 $transaction = new Transaction();
                 $transaction->setAmount($pay_amount);
                 $transaction->setDescription('Cita');
-
                 $callbackUrl = url('/api/paypal/status');
                 $callbackUrlAccept = url('/api/paypal/status/'.$SI->id);
-
                 $redirectUrls = new RedirectUrls();
                 $redirectUrls->setReturnUrl($callbackUrlAccept)
                     ->setCancelUrl($callbackUrl);
-
                 $payment = new Payment();
                 $payment->setIntent('sale')
                     ->setPayer($payer)
                     ->setTransactions(array($transaction))
                     ->setRedirectUrls($redirectUrls);
-                
                 try {
                     $payment->create($this->apiContext);
                     $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
@@ -174,7 +168,6 @@ class DateController extends Controller
                     return $ex;
                     echo $ex->getData();
                 }
-
             }
             
             if($request->payment_type == "stripe"){
@@ -182,14 +175,12 @@ class DateController extends Controller
                 try {
                     $stripeConfig = Config::get('stripe');
                     Stripe::setApiKey($stripeConfig['secret']);
-                    
                     $customer = Customer::create(array(
                         'email' => $request->stripeEmail,
                         'source' => $request->stripeToken,
                         'address'=>$request->stripeAddress,
         
                     ));
-
                     $charge = Charge::create(array(
                         'customer' => $customer->id,
                         'amount' => $amount,
@@ -201,18 +192,15 @@ class DateController extends Controller
                     $this->sendWhatsAppMessage("Se a agendado una nueva cita","whatsapp:+521".$DI->Dates[0]->doctor->phone);
                     $this->sendWhatsAppMessage("Se a agendado su cita","whatsapp:+521".$DI->Dates[0]->patient->phone);
                     return $this->successResponse( "Venta realizada con éxito" , 200 );
-                    
                 } catch (\Exception $ex) {
                     return $ex->getMessage();
                 }
-
             }
             
             // $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
             // DB::commit();
             // return $this->successResponse($DI, Response::HTTP_CREATED);
             //nota para el dani del futuro, pensar que pasaria en caso de que fallara en este fraccmento de codigo despues de hacer el pago en paypal
-
 
         } catch (\Throwable $th) {
             DB::rollback();
@@ -267,5 +255,68 @@ class DateController extends Controller
         $status = 'Lo sentimos! El pago a través de PayPal no se pudo realizar ERR2.';
         return $this->errorResponse($status, 400);
         // return redirect('/results')->with(compact('status'));
+    }
+
+    public function paymentPaypal(Request $request, Sale $sale)
+    {
+        $amount = $sale->amount;
+        $payer = new Payer();
+        $payer->setPaymentMethod('paypal');
+        $pay_amount = new Amount();
+        $pay_amount->setTotal(strval($amount));
+        $pay_amount->setCurrency('MXN');
+        
+        $transaction = new Transaction();
+        $transaction->setAmount($pay_amount);
+        $transaction->setDescription('Cita');
+        $callbackUrl = url('/api/paypal/status');
+        $callbackUrlAccept = url('/api/paypal/status/'.$SI->id);
+        $redirectUrls = new RedirectUrls();
+        $redirectUrls->setReturnUrl($callbackUrlAccept)
+            ->setCancelUrl($callbackUrl);
+        $payment = new Payment();
+        $payment->setIntent('sale')
+            ->setPayer($payer)
+            ->setTransactions(array($transaction))
+            ->setRedirectUrls($redirectUrls);
+        
+        try {
+            $payment->create($this->apiContext);
+            DB::commit();
+            $this->sendWhatsAppMessage("Se a agendado una nueva cita","whatsapp:+521".$sale->datesInfo->Dates[0]->doctor->phone);
+            $this->sendWhatsAppMessage("Se a generado su link de pago".$payment->getApprovalLink(),"whatsapp:+521".$$sale->datesInfo->Dates[0]->patient->phone);
+            return $this->successResponse( $payment->getApprovalLink() , 200 );
+        } catch (PayPalConnectionException $ex) {
+            echo $ex->getData();
+        }
+    }
+
+    public function paymentStripe(Request $request, Sale $sale)
+    {
+        try {
+            
+            $amount = floattostr($sale->amount);
+            $amount = $amount * 100;
+
+            $stripeConfig = Config::get('stripe');
+            Stripe::setApiKey($stripeConfig['secret']);
+            
+            $customer = Customer::create(array(
+                'email' => $request->stripeEmail,
+                'source' => $request->stripeToken,
+                'address'=>$request->stripeAddress,
+            ));
+            $charge = Charge::create(array(
+                'customer' => $customer->id,
+                'amount' => $amount,
+                'currency' => 'mxn'
+            ));
+            $SI->update(["pay_id"=>$charge->id,"payment_type"=>"stripe"]);
+            DB::commit();
+            return $this->successResponse( "Venta realizada con éxito" , 200 );
+
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+        }
     }
 }
