@@ -56,7 +56,7 @@ class DateController extends Controller
 
     public function index()
     {
-        return $this->successResponse(Date::all());
+        return $this->successResponse(Date::with(['patient','doctor','shift'])->get());
     }
 
     public function sendWhatsAppMessage(string $message, string $recipient)
@@ -107,7 +107,7 @@ class DateController extends Controller
             $end_date = getDate(strtotime($request->end_hour))["hours"];
             //crea la informacion de la cita
             if(getDate(strtotime($request->init_hour))["minutes"] !=0 ){
-                $init_hour = $init_hour + 0.5;
+                $init_date = $init_date + 0.5;
             }
             if(getDate(strtotime($request->end_hour))["minutes"] !=0 ){
                 $end_date = $end_date + 0.5;
@@ -117,6 +117,8 @@ class DateController extends Controller
             $DI = DatesInfo::create();
 
             $request["date"] = $request->init_hour;
+            $request["initial_date"] = $request->init_hour;
+            $request["end_date"] = $request->end_hour;
             $request["dates_infos_id"] = $DI->id;
 
             //crea los turnos que ocupara la cita y valida que esos turnos esten disponibles

@@ -25,8 +25,8 @@ Route::get('/', function () {
 
 Route::namespace('App\Http\Controllers\Api')->group(function (){
 
-    Route::post('/date','DateController@store');
-    Route::get('/date','DateController@index');
+    Route::get('/date','DateController@index')->name('date.index')->middleware(['auth:api','role_or_permission:admin|date.index']);
+    Route::post('/date','DateController@store')->name('date.store')->middleware(['auth:api','role_or_permission:admin|date.store']);
 
     Route::post('/paypal/link/{sale}','DateController@paymentPaypal');
     Route::post('/stripe/link/{sale}','DateController@paymentStripe');
