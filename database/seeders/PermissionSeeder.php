@@ -44,6 +44,7 @@ class PermissionSeeder extends Seeder
         $absenceDate = Permission::create(['name' => 'date.absence']);
         $storeDate = Permission::create(['name' => 'date.store']);
         $indexDate = Permission::create(['name' => 'date.index']);
+        $lockDate = Permission::create(['name' => 'date.lock']);
 
         $medicalHistoryall = Permission::create(['name' => 'medicalHistory.all']);
         $medicalHistorybyUser = Permission::create(['name' => 'medicalHistory.byUser']);
@@ -58,7 +59,7 @@ class PermissionSeeder extends Seeder
             $indexBO, $createBO, $updateBO, $deleteBO, $showBO, 
             $indexAdmins, $indexPatients, $indexDoctors,
             $indexSpecialty, $createSpecialty, $updateSpecialty, $deleteSpecialty, $showSpecialty, 
-            $absenceDate, $storeDate, $indexDate,
+            $absenceDate, $storeDate,$lockDate, $indexDate,
             $medicalHistoryall, $medicalHistorybyUser,
         ]);
 
@@ -66,7 +67,7 @@ class PermissionSeeder extends Seeder
             $test, $createPatient, $showUser, $updateUser,
             $indexBO, $showBO, $indexPatients, $indexDoctors,
             $indexSpecialty, $showSpecialty,
-            $absenceDate, $storeDate, $indexDate,
+            $absenceDate, $storeDate,$lockDate, $indexDate,
             $medicalHistoryall, $medicalHistorybyUser,
         ]);
         
