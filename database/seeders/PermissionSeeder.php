@@ -18,6 +18,9 @@ class PermissionSeeder extends Seeder
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        $indexConfiguration = Permission::create(['name' => 'configurations.index']);
+        $updateConfiguration = Permission::create(['name' => 'configurations.update']);
+
         $test = Permission::create(['name' => 'testpermissions']);
         $createAdmin = Permission::create(['name' => 'admin.store']);
         $createDoc = Permission::create(['name' => 'doctor.store']);
@@ -60,6 +63,7 @@ class PermissionSeeder extends Seeder
             $indexSpecialty, $createSpecialty, $updateSpecialty, $deleteSpecialty, $showSpecialty, 
             $absenceDate, $storeDate, $indexDate,
             $medicalHistoryall, $medicalHistorybyUser,
+            $indexConfiguration, $updateConfiguration,
         ]);
 
         $doctor->syncPermissions([

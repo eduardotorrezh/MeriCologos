@@ -65,7 +65,44 @@ class UserSeeder extends Seeder
                 "email"=>"pat@pat.com",
                 "password"=>"pass1234",
                 "branch_office_id"=>1,
-                "phone"=>"9613521649"
+                "phone"=>"9613521649",
+                "status_patient"=>"active",
+            ]
+        )->assignRole('patient');
+
+        User::create(
+            [
+                "name"=>"Patient",
+                "last_name"=>"Pat",
+                "email"=>"pat2@pat.com",
+                "password"=>"pass1234",
+                "branch_office_id"=>1,
+                "phone"=>"9613521649",
+                "status_patient"=>"inactive",
+            ]
+        )->assignRole('patient');
+
+        User::create(
+            [
+                "name"=>"Patient",
+                "last_name"=>"Pat",
+                "email"=>"pat3@pat.com",
+                "password"=>"pass1234",
+                "branch_office_id"=>1,
+                "phone"=>"9613521649",
+                "status_patient"=>"discharge",
+            ]
+        )->assignRole('patient');
+
+        User::create(
+            [
+                "name"=>"Patient",
+                "last_name"=>"Pat",
+                "email"=>"pat4@pat.com",
+                "password"=>"pass1234",
+                "branch_office_id"=>1,
+                "phone"=>"9613521649",
+                "status_patient"=>"pending",
             ]
         )->assignRole('patient');
 

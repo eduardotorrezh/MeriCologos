@@ -124,6 +124,7 @@ class PassportController extends Controller
             if($validator->fails()){
                 return response(['message' => 'Validation errors', 'errors' =>  $validator->errors()], 422);
             }
+            $request["status_patient"] = 'active';
             $user = User::create($request->all())->assignRole('patient');
             // $data['token'] =  $user->createToken('users')->accessToken;
             $data['user'] = $user;

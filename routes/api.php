@@ -45,7 +45,14 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/medicalHistory','UserController@medicalHistory')->name('medicalHistory.all')->middleware(['auth:api','role_or_permission:admin|medicalHistory.all']);
     Route::get('/medicalHistory/{user}','UserController@medicalHistoryByUser')->name('medicalHistory.byUser')->middleware(['auth:api','role_or_permission:admin|medicalHistory.byUser']);
 
-    
+    // Route::get('/configurations','SpecialtyController@index')->name('configurations.index')->middleware(['auth:api','role_or_permission:admin|configurations.index']);
+    // Route::get('/configurations/{configuration}','SpecialtyController@show')->name('configurations.show')->middleware(['auth:api','role_or_permission:admin|configurations.index']);
+    // Route::put('/configurations/{configuration}','SpecialtyController@update')->name('configurations.update')->middleware(['auth:api','role_or_permission:admin|configurations.update']);
+    Route::get('/configurations','ConfigurationController@index');
+    Route::put('/configurations','ConfigurationController@update');
+
+    Route::post('/patientsByStatus','UserController@patientsByStatus');
+
     Route::get('/branchOffices','BranchOfficeController@index')->name('branch_offices.index')->middleware(['auth:api','role_or_permission:admin|branch_offices.index']);
     Route::post('/branchOffices','BranchOfficeController@store')->name('branch_offices.store')->middleware(['auth:api','role_or_permission:admin|branch_offices.store']);
     Route::get('/branchOffices/{branchOffice}','BranchOfficeController@show')->name('branch_offices.index')->middleware(['auth:api','role_or_permission:admin|branch_offices.index']);
