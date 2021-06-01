@@ -17,6 +17,7 @@ class CreateDatesInfosTable extends Migration
             $table->id();
             $table->boolean('assistance')->default(true);
             $table->boolean('paid')->default(false);
+            $table->boolean('locket')->default(false);
             $table->timestamps();
         });
     }

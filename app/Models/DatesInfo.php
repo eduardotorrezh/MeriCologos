@@ -10,7 +10,7 @@ class DatesInfo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'assistance','paid'
+        'assistance','paid','locket'
     ];
 
     protected $casts = [

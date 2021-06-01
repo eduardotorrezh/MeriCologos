@@ -69,6 +69,71 @@ class DateController extends Controller
         return $client->messages->create($recipient, array('from' => "whatsapp:$twilio_whatsapp_number", 'body' => $message));
     }
 
+    public function lockDates(Request $request){
+        $validator = Validator::make($request->all(), [
+            'doctor_id' => 'required',
+            'init_hour' => 'required',
+            'end_hour' => 'required',
+
+        ]);
+        if($validator->fails()){
+            return response(
+                [
+                    'message' => 'Validation errors', 
+                    'errors' =>  $validator->errors()
+                ], 422
+            );
+        }
+        DB::beginTransaction();
+        try {
+
+
+
+
+            
+            $init_date = getDate(strtotime($request->init_hour))["hours"];
+            $end_date = getDate(strtotime($request->end_hour))["hours"];
+            //crea la informacion de la cita
+            if(getDate(strtotime($request->init_hour))["minutes"] !=0 ){
+                $init_date = $init_date + 0.5;
+            }
+            if(getDate(strtotime($request->end_hour))["minutes"] !=0 ){
+                $end_date = $end_date + 0.5;
+            }
+
+            
+            $DI = DatesInfo::create(["locked"=>true]);
+
+
+            $request["patient_id"]= $request->doctor_id;
+            $request["date"] = $request->init_hour;
+            $request["service"]= 'N/A';
+            $request["estado"]= 'locked';
+            $request["initial_date"] = $request->init_hour;
+            $request["end_date"] = $request->end_hour;
+            $request["dates_infos_id"] = $DI->id;
+
+            for ($i=$init_date; $i < $end_date; $i = $i + 0.5) {
+                if(count(Date::where("shift_id",$i * 2)->where("date",date("Y-m-d",strtotime($request->init_hour )))->where("doctor_id",$request->doctor_id)->get() ) != 0 ){
+                    DB::rollback();
+                    return $this->errorResponse('este turno ya esta ocupado', 400);
+                }else{
+                    // $amount = $amount + 100;
+                    $request["shift_id"] = $i *2;
+                    $i *2;
+                    $date = Date::create($request->all());
+                }
+            }
+
+            DB::commit();
+            return $this->successResponse( $DI , 200 );
+            }catch (\Throwable $th) {
+                DB::rollback();
+                return $th;
+            }
+            
+    }
+
 
         /**
      * Store a newly created resource in storage.
@@ -171,6 +236,7 @@ class DateController extends Controller
                     echo $ex->getData();
                 }
             }
+
             
             if($request->payment_type == "stripe"){
 
