@@ -93,6 +93,40 @@ class UserController extends Controller
         }
     }
 
+    public function patientsByStatus(Request $request)
+    {
+        try {
+
+            switch ( $request->status ) {
+                case 'active':
+                    $user = User::role('patient')->where("status_patient","active")->get();
+                    break;
+                
+                case 'inactive':
+                    $user = User::role('patient')->where("status_patient","inactive")->get();
+                    break;
+                
+                case 'discharge':
+                    $user = User::role('patient')->where("status_patient","discharge")->get();
+                    break;
+                
+                case 'pending':
+                    $user = User::role('patient')->where("status_patient","pending")->get();
+                    break;
+                
+                default:
+                    return $this->errorResponse("Status no exist", 400);
+                    break;
+            }
+
+            // $user = User::role('patient')->where("status_patient","")->with(['dates.dates_info','dates.dates_info','dates.patient','dates.doctor'])->get();
+            return $this->successResponse($user, Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            return $this->errorResponse($th->getMessage(), 400);
+            // return response($th->getMessage(), 400);
+        }
+    }
+
     public function admins()
     {
         try {

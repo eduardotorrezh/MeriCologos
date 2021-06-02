@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::namespace('App\Http\Controllers\Api')->group(function (){
 
-    Route::get('/','CheckoutController@checkout');
+    // Route::get('/','CheckoutController@checkout');
 
     // Route::get('checkout','CheckoutController@checkout');
     Route::post('checkout','CheckoutController@afterpayment')->name('checkout.credit-card');
