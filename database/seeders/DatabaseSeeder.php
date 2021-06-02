@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ShiftsSeeder::class,
             SpecialtySeeder::class,
             ConfigurationSeeder::class,
+            ServiceSeeder::class,
         ]);
     }
 }

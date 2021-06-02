@@ -25,6 +25,35 @@ class SpecialtyController extends Controller
         return $this->successResponse(Specialty::where("status",true)->get());
     }
 
+    public function addSpecialtiesToDoctor(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validator = Validator::make($request->all(), [
+                'doctor_id' => 'required',
+                'specialties' => 'required',
+            ]);
+            if($validator->fails()){
+                return response(
+                    [
+                        'message' => 'Validation errors', 
+                        'errors' =>  $validator->errors()
+                    ], 422
+                );
+            }
+
+            foreach ($request->specialties as $specialty_id) {
+                DoctorWithSpecialty::create(["user_id"=>$request->doctor_id,"specialty_id"=>$specialty_id]);
+            }
+            DB::commit();
+            return $this->successResponse("Everything cool!", Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            // return response($th->getMessage(), 400);
+            return $this->errorResponse($th->getMessage(), 400);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -118,4 +147,33 @@ class SpecialtyController extends Controller
             // return response($th->getMessage(), 400);
         }
     }
+
+    public function removeSpecialtiesToDoctor(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validator = Validator::make($request->all(), [
+                'doctor_id' => 'required',
+                'specialties' => 'required',
+            ]);
+            if($validator->fails()){
+                return response(
+                    [
+                        'message' => 'Validation errors', 
+                        'errors' =>  $validator->errors()
+                    ], 422
+                );
+            }
+
+            foreach ($request->specialties as $specialty_id) {
+                DoctorWithSpecialty::where("user_id",$request->doctor_id)->where("specialty_id",$specialty_id)->delete();
+            }
+            DB::commit();
+            return $this->successResponse("Remove success!", Response::HTTP_CREATED);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return $this->errorResponse($th->getMessage(), 400);
+        }
+    }
+
 }

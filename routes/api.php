@@ -72,12 +72,20 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/reportDates/{id}','ReportController@reportsDates');
     Route::get('/gains','ReportController@gains');
 
+    Route::get('/services','ServiceController@index');
+    Route::post('/services','ServiceController@store');
+    Route::get('/services/{service}','ServiceController@show');
+    Route::put('/services/{service}','ServiceController@update');
+    Route::delete('/services/{service}','ServiceController@destroy');
 
     Route::get('/specialties','SpecialtyController@index')->name('specialties.index')->middleware(['auth:api','role_or_permission:admin|specialties.index']);
     Route::post('/specialties','SpecialtyController@store')->name('specialties.store')->middleware(['auth:api','role_or_permission:admin|specialties.store']);
     Route::get('/specialties/{specialty}','SpecialtyController@show')->name('specialties.index')->middleware(['auth:api','role_or_permission:admin|specialties.index']);
     Route::put('/specialties/{specialty}','SpecialtyController@update')->name('specialties.update')->middleware(['auth:api','role_or_permission:admin|specialties.update']);
     Route::delete('/specialties/{specialty}','SpecialtyController@destroy')->name('specialties.destroy')->middleware(['auth:api','role_or_permission:admin|specialties.destroy']);
+
+    Route::post('/addSpecialtiesToDoctor','SpecialtyController@addSpecialtiesToDoctor');
+    Route::post('/removeSpecialtiesToDoctor','SpecialtyController@removeSpecialtiesToDoctor');
 
     Route::post('/authUserInfo','PassportController@authUserInfo')->name('authUserInfo')->middleware('auth:api');
     Route::post('/test','PassportController@test')->name('test')->middleware(['auth:api','role_or_permission:admin|testpermissions']);
