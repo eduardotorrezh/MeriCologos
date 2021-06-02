@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Specialty;
+use App\Models\DoctorWithSpecialty;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -46,7 +47,14 @@ class SpecialtyController extends Controller
                 );
             }
             $specialty = Specialty::create($request->all());
+            $porciones = explode(",", $request->doctors);
+            foreach ($porciones as $value) {
+                DoctorWithSpecialty::create(["user_id"=>$value,"specialty_id"=>$specialty->id]);
+            }
+            
+
             DB::commit();
+
             return $this->successResponse($specialty, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             DB::rollback();

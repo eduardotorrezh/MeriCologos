@@ -59,6 +59,39 @@ class DateController extends Controller
         return $this->successResponse(Date::with(['patient','doctor','shift'])->get());
     }
 
+    public function indexFilter(Request $request)
+    {
+        // if($request->branch_office_id != null){
+        //     if($request->doctor_id != null){
+        //         return $this->successResponse(Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id')->where('branch_office_id','=',$request->branch_office_id)->where('doctor_id','=',$request->doctor_id)->get());
+        //     }else{
+        //         return $this->successResponse(Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id')->where('branch_office_id','=',$request->branch_office_id)->get());
+        //     }
+            
+        // }else if($request->doctor_id != null){
+        //     return $this->successResponse(Date::with(['patient','doctor','shift'])->where('doctor_id','=',$request->doctor_id)->get());
+        // }else if($request->init_date != null){
+        //     return $this->successResponse(Date::with(['patient','doctor','shift'])->where('doctor_id','=',$request->doctor_id)->get());
+        // }
+        $query = "";
+        if($request->doctor_id != null && $request->branch_office_id != null){
+            $query = Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id');
+        }else{
+            $query = Date::with(['patient','doctor','shift']);
+        }
+        
+        if($request->doctor_id != null){
+            $query->where('doctor_id','=',$request->doctor_id);
+        }
+        if($request->branch_office_id != null){
+            $query->where('branch_office_id','=',$request->branch_office_id);
+        }
+        if($request->initial_date != null){
+            $query->where('initial_date','>=',$request->initial_date)->where('end_date','<=',$request->end_date);
+        }
+        return $query->get();
+    }
+
     public function sendWhatsAppMessage(string $message, string $recipient)
     {
         $twilio_whatsapp_number = getenv('TWILIO_WHATSAPP_NUMBER');
