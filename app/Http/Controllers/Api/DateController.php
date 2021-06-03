@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Date;
 use App\Models\DatesInfo;
+use Carbon\Carbon;
 use App\Models\Sale;
 use App\Models\SaleInfo;
 use Illuminate\Support\Facades\Auth;
@@ -210,7 +211,10 @@ class DateController extends Controller
             if(getDate(strtotime($request->end_hour))["minutes"] !=0 ){
                 $end_date = $end_date + 0.5;
             }
-
+            if(!Carbon::now()->addHour(12)->lt(new Carbon($request->init_hour))){
+                DB::rollback();
+                return $this->errorResponse('Faltan menos de 12h horas para este turno', 400);
+            }
             
             $DI = DatesInfo::create();
 

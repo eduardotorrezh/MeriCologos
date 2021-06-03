@@ -72,6 +72,8 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/reportDates/{id}','ReportController@reportsDates');
     Route::get('/gains','ReportController@gains');
 
+    Route::get('/sales','SaleController@index');
+
     Route::get('/services','ServiceController@index');
     Route::post('/services','ServiceController@store');
     Route::get('/services/{service}','ServiceController@show');
