@@ -28,6 +28,7 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::post('/dateFilter','DateController@indexFilter')->name('date.index')->middleware(['auth:api','role_or_permission:admin|date.index']);
     Route::post('/date','DateController@store')->name('date.store')->middleware(['auth:api','role_or_permission:admin|date.store']);
     Route::post('/lockDate','DateController@lockDates')->name('date.lock')->middleware(['auth:api','role_or_permission:admin|date.lock']);
+    Route::get('/date','DateController@index');
 
     Route::post('/paypal/link/{sale}','DateController@paymentPaypal');
     Route::post('/stripe/link/{sale}','DateController@paymentStripe');
