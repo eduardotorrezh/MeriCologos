@@ -22,7 +22,7 @@ class SaleController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(Sale::all());
+        return $this->successResponse(Sale::with(['datesInfo','sale_info','user_id','user_id.branchOffice'])->get());
     }
 
  
