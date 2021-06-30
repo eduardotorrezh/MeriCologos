@@ -76,10 +76,12 @@ class SpecialtyController extends Controller
                 );
             }
             $specialty = Specialty::create($request->all());
-            $porciones = explode(",", $request->doctors);
-            foreach ($porciones as $value) {
-                DoctorWithSpecialty::create(["user_id"=>$value,"specialty_id"=>$specialty->id]);
-            }
+            
+            //Comenté esto porque mata lo mata;
+            // $porciones = explode(",", $request->doctors);
+            // foreach ($porciones as $value) {
+            //     DoctorWithSpecialty::create(["user_id"=>$value,"specialty_id"=>$specialty->id]);
+            // }
             
 
             DB::commit();
