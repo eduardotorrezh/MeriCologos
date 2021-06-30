@@ -86,7 +86,7 @@ class DateController extends Controller
             $query->where('doctor_id','=',$request->doctor_id);
         }
         if($request->patient_id != null){
-            $query->where('doctor_id','=',$request->doctor_id);
+            $query->where('patient_id','=',$request->patient_id);
         }
         if($request->branch_office_id != null){
             $query->where('branch_office_id','=',$request->branch_office_id);
