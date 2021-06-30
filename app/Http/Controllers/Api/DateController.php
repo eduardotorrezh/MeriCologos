@@ -57,6 +57,7 @@ class DateController extends Controller
 
     public function index()
     {
+  
         return $this->successResponse(Date::with(['patient','doctor','shift'])->get());
     }
 
@@ -82,6 +83,9 @@ class DateController extends Controller
         }
         
         if($request->doctor_id != null){
+            $query->where('doctor_id','=',$request->doctor_id);
+        }
+        if($request->patient_id != null){
             $query->where('doctor_id','=',$request->doctor_id);
         }
         if($request->branch_office_id != null){
@@ -153,7 +157,7 @@ class DateController extends Controller
                     return $this->errorResponse('este turno ya esta ocupado', 400);
                 }else{
                     // $amount = $amount + 100;
-                    $request["shift_id"] = $i *2;
+                    $request["shift_id"] = ($i *2) +1;
                     $i *2;
                     $date = Date::create($request->all());
                 }
