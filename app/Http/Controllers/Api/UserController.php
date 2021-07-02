@@ -130,7 +130,7 @@ class UserController extends Controller
     public function admins()
     {
         try {
-            $user = User::role('admin')->with(['branchOffice'])->paginate(10);
+            $user = User::role('admin')->with(['branchOffice'])->get();
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(), 400);
@@ -140,7 +140,7 @@ class UserController extends Controller
     public function patients()
     {
         try {
-            $user = User::role('patient')->with(['branchOffice'])->paginate(10);
+            $user = User::role('patient')->with(['branchOffice'])->get();
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(), 400);
@@ -150,7 +150,7 @@ class UserController extends Controller
     public function doctors()
     {
         try {
-            $user = User::role('doctor')->with(['branchOffice','doctorWithSpecialties.specialty'])->paginate(10);
+            $user = User::role('doctor')->with(['branchOffice','doctorWithSpecialties.specialty'])->get();
             return $this->successResponse($user, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(), 400);

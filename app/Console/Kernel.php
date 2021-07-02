@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\DatesNotification'
     ];
 
     /**
@@ -27,6 +27,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('dates:notification')->everyMinutes(30);
+
         $schedule->call(function () {
             foreach (User::role('patient')->get() as $patient) {
                 $date = Date::where("patient_id",$patient->id)->orderBy('id','DESC')->first();
