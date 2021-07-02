@@ -3,33 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Date;
-use App\Models\DatesInfo;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use Validator;
-use DB;
-use App\Traits\ApiResponser;
-use App\Traits\DateTrait;
-use Carbon\Carbon;
+use App\Exports\PatientExport;
+use App\Exports\PatientBranchOfficeExport;
+use Excel;
+
 class ReportController extends Controller
 {
-    use ApiResponser;
-    use DateTrait;
-  
-
-
-    function reportsDates($id){
-        Carbon::setLocale('es');
-        $now = Carbon::now();
-        $results = Date::where('doctor_id','=',$id)->orderBy('date','ASC')->orderBy('shift_id','ASC')->with(['shift','patient','doctor','dates_info'])->get();
-        $dates = $this->getDates($results);
-        return view('reports.datesReport',["dates"=>$dates,"now"=>$now]);
+    public function patientReportXLS(){
+        return Excel::download(new PatientExport(), 'reporte_por_pacientes.xlsx');
     }
 
-
-    function gains(){
-
+    public function patientBrachOfficeReportXLS(Request $request){
+        return Excel::download(new PatientBranchOfficeExport($request), 'reporte_por_sucursal_y_pacientes.xlsx');
     }
-
 }

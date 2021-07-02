@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     // return "Mericologos API";
-//     return view('test2');
-// });
+Route::get('/', function () {
+    return "Mericologos API";
+    // return view('test2');
+});
 
 Route::namespace('App\Http\Controllers\Api')->group(function (){
 
