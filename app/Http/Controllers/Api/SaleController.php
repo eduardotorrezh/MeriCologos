@@ -25,5 +25,4 @@ class SaleController extends Controller
         return $this->successResponse(Sale::with(['datesInfo','sale_info','user_id','user_id.branchOffice'])->get());
     }
 
- 
 }
