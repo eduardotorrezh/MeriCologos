@@ -26,6 +26,7 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
+        'birthday',
         'branch_office_id',
         "status_patient",
         'status'

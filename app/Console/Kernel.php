@@ -43,6 +43,8 @@ class Kernel extends ConsoleKernel
                 }
             }
         })->daily();
+        
+        $schedule->command('birthday:notification')->dailyAt('11:00');
     }
 
     /**
