@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Date;
+use App\Models\User;
 use App\Models\DatesInfo;
 use App\Models\DatesHistorial;
 use App\Mail\ActionInDates;
@@ -15,6 +16,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Twilio\Rest\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Database\Eloquent\Builder;
 use Validator;
 use DB;
 
@@ -61,20 +63,16 @@ class DateController extends Controller
         return $this->successResponse(Date::with(['patient','doctor','shift'])->get());
     }
 
+    public function patientsByService(Request $request)
+    {
+        $users = User::whereHas('dates', function (Builder $query) use ($request) {
+            $query->where('service', $request->service);
+        })->get();
+        return $this->successResponse($users);
+    }
+
     public function indexFilter(Request $request)
     {
-        // if($request->branch_office_id != null){
-        //     if($request->doctor_id != null){
-        //         return $this->successResponse(Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id')->where('branch_office_id','=',$request->branch_office_id)->where('doctor_id','=',$request->doctor_id)->get());
-        //     }else{
-        //         return $this->successResponse(Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id')->where('branch_office_id','=',$request->branch_office_id)->get());
-        //     }
-            
-        // }else if($request->doctor_id != null){
-        //     return $this->successResponse(Date::with(['patient','doctor','shift'])->where('doctor_id','=',$request->doctor_id)->get());
-        // }else if($request->init_date != null){
-        //     return $this->successResponse(Date::with(['patient','doctor','shift'])->where('doctor_id','=',$request->doctor_id)->get());
-        // }
         $query = "";
         if($request->doctor_id != null && $request->branch_office_id != null){
             $query = Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id');
