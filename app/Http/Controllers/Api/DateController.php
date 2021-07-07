@@ -94,7 +94,7 @@ class DateController extends Controller
         if($request->initial_date != null){
             $query->where('initial_date','>=',$request->initial_date)->where('end_date','<=',$request->end_date);
         }
-        return $query->get();
+        return $this->successResponse($query->get());
     }
 
     public function sendWhatsAppMessage(string $message, string $recipient)
