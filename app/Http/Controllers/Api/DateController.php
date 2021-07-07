@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Date;
+use App\Models\User;
 use App\Models\DatesInfo;
+use App\Models\DatesHistorial;
+use App\Mail\ActionInDates;
 use Carbon\Carbon;
 use App\Models\Sale;
 use App\Models\SaleInfo;
@@ -13,6 +16,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Twilio\Rest\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Database\Eloquent\Builder;
 use Validator;
 use DB;
 
@@ -51,30 +55,24 @@ class DateController extends Controller
                 $payPalConfig['secret']
             )
         );
-
         $this->apiContext->setConfig($payPalConfig['settings']);
     }
 
     public function index()
     {
-  
         return $this->successResponse(Date::with(['patient','doctor','shift'])->get());
+    }
+
+    public function patientsByService(Request $request)
+    {
+        $users = User::whereHas('dates', function (Builder $query) use ($request) {
+            $query->where('service', $request->service);
+        })->get();
+        return $this->successResponse($users);
     }
 
     public function indexFilter(Request $request)
     {
-        // if($request->branch_office_id != null){
-        //     if($request->doctor_id != null){
-        //         return $this->successResponse(Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id')->where('branch_office_id','=',$request->branch_office_id)->where('doctor_id','=',$request->doctor_id)->get());
-        //     }else{
-        //         return $this->successResponse(Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id')->where('branch_office_id','=',$request->branch_office_id)->get());
-        //     }
-            
-        // }else if($request->doctor_id != null){
-        //     return $this->successResponse(Date::with(['patient','doctor','shift'])->where('doctor_id','=',$request->doctor_id)->get());
-        // }else if($request->init_date != null){
-        //     return $this->successResponse(Date::with(['patient','doctor','shift'])->where('doctor_id','=',$request->doctor_id)->get());
-        // }
         $query = "";
         if($request->doctor_id != null && $request->branch_office_id != null){
             $query = Date::with(['patient','doctor','shift'])->join('users','dates.doctor_id','=','users.id');
@@ -124,11 +122,6 @@ class DateController extends Controller
         }
         DB::beginTransaction();
         try {
-
-
-
-
-            
             $init_date = getDate(strtotime($request->init_hour))["hours"];
             $end_date = getDate(strtotime($request->end_hour))["hours"];
             //crea la informacion de la cita
@@ -139,10 +132,7 @@ class DateController extends Controller
                 $end_date = $end_date + 0.5;
             }
 
-            
             $DI = DatesInfo::create(["locked"=>true]);
-
-
             $request["patient_id"]= $request->doctor_id;
             $request["date"] = $request->init_hour;
             $request["service"]= 'N/A';
@@ -201,9 +191,6 @@ class DateController extends Controller
         }
         DB::beginTransaction();
         try {
-
-
-
 
             $amount = $request->amount;
             $init_date = getDate(strtotime($request->init_hour))["hours"];
@@ -267,9 +254,10 @@ class DateController extends Controller
                 try {
                     $payment->create($this->apiContext);
                     $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
-                    DB::commit();
                     $this->sendWhatsAppMessage("Se a agendado una nueva cita","whatsapp:+521".$DI->Dates[0]->doctor->phone);
                     $this->sendWhatsAppMessage("Se a generado su link de pago".$payment->getApprovalLink(),"whatsapp:+521".$DI->Dates[0]->patient->phone);
+                    DatesHistorial::create(["user_id"=>Auth::user()->id,"date_info_id"=>$DI->id,"action"=>"create"]);
+                    DB::commit();
                     return $this->successResponse( $payment->getApprovalLink() , 200 );
                     //return redirect()->away( $payment->getApprovalLink() );
                 } catch (PayPalConnectionException $ex) {
@@ -278,7 +266,6 @@ class DateController extends Controller
                 }
             }
 
-            
             if($request->payment_type == "stripe"){
 
                 try {
@@ -297,9 +284,10 @@ class DateController extends Controller
                     ));
                     $SI->update(["pay_id"=>$charge->id,"payment_type"=>"stripe"]);
                     $S = Sale::create(["amount"=>$amount,"date_info_id"=>$DI->id,"user_id"=> Auth::user()->id,"sale_info_id"=>$SI->id]);
-                    DB::commit();
                     $this->sendWhatsAppMessage("Se a agendado una nueva cita","whatsapp:+521".$DI->Dates[0]->doctor->phone);
                     $this->sendWhatsAppMessage("Se a agendado su cita","whatsapp:+521".$DI->Dates[0]->patient->phone);
+                    DatesHistorial::create(["user_id"=>Auth::user()->id,"date_info_id"=>$DI->id,"action"=>"create"]);
+                    DB::commit();
                     return $this->successResponse( "Venta realizada con éxito" , 200 );
                 } catch (\Exception $ex) {
                     return $ex->getMessage();
@@ -325,11 +313,23 @@ class DateController extends Controller
             if($datesInfo->assistance){
                 $firstDate = $datesInfo->Dates->first();
                 $firstDate->patient->update(["absences"=>$firstDate->patient->absences+1]);
+                $this->sendMail($firstDate->patient->email);
+                $this->sendMail($firstDate->doctor->email);
             }
+            DatesHistorial::create(["user_id"=>Auth::user()->id,"date_info_id"=>$datesInfo->id,"action"=>"absence"]);
             DB::commit();
             return $this->successResponse($datesInfo, 200);
         } catch (\Throwable $th) {
             DB::rollback();
+            return $this->errorResponse($th->getMessage(), 400);
+        }
+    }
+
+    public function sendMail($email)
+    {
+        try {
+            Mail::to($email)->send(new ActionInDates());
+        } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(), 400);
         }
     }

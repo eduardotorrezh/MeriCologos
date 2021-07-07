@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->foreign('branch_office_id')->references('id')->on('branch_offices')->onDelete('cascade');
             $table->string('status_patient')->nullable(); 
             $table->string('phone');
+            $table->date('birthday');
             $table->boolean('status')->default(true);
             $table->boolean('active')->default(true);
             $table->integer('absences')->default(0);

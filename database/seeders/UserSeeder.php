@@ -21,7 +21,8 @@ class UserSeeder extends Seeder
                 "email"=>"ed@ed.com",
                 "password"=>"pass1234",
                 "branch_office_id"=>1,
-                "phone"=>"9613521645"
+                "phone"=>"9613521645",
+                "birthday"=>"1990-03-31",
             ]
         )->assignRole('admin');
 
@@ -32,7 +33,8 @@ class UserSeeder extends Seeder
                 "email"=>"dani@dani.com",
                 "password"=>"pass1234",
                 "branch_office_id"=>1,
-                "phone"=>"9613521646"
+                "phone"=>"9613521646",
+                "birthday"=>"1990-03-31",
             ]
         )->assignRole('admin');
 
@@ -43,7 +45,8 @@ class UserSeeder extends Seeder
                 "email"=>"admin@admin.com",
                 "password"=>"pass1234",
                 "branch_office_id"=>2,
-                "phone"=>"9613521647"
+                "phone"=>"9613521647",
+                "birthday"=>"1990-03-31",
             ]
         )->assignRole('admin');
 
@@ -54,7 +57,8 @@ class UserSeeder extends Seeder
                 "email"=>"doc@doc.com",
                 "password"=>"pass1234",
                 "branch_office_id"=>1,
-                "phone"=>"9613521648"
+                "phone"=>"9613521648",
+                "birthday"=>"1991-03-31",
             ]
         )->assignRole('doctor');
 
@@ -67,6 +71,7 @@ class UserSeeder extends Seeder
                 "branch_office_id"=>1,
                 "phone"=>"9613521649",
                 "status_patient"=>"active",
+                "birthday"=>"1990-03-31",
             ]
         )->assignRole('patient');
 
@@ -79,6 +84,7 @@ class UserSeeder extends Seeder
                 "branch_office_id"=>1,
                 "phone"=>"9613521649",
                 "status_patient"=>"inactive",
+                "birthday"=>"1990-03-31",
             ]
         )->assignRole('patient');
 
@@ -91,6 +97,7 @@ class UserSeeder extends Seeder
                 "branch_office_id"=>1,
                 "phone"=>"9613521649",
                 "status_patient"=>"discharge",
+                "birthday"=>"2021-03-30",
             ]
         )->assignRole('patient');
 
@@ -103,6 +110,7 @@ class UserSeeder extends Seeder
                 "branch_office_id"=>1,
                 "phone"=>"9613521649",
                 "status_patient"=>"pending",
+                "birthday"=>"2021-03-31",
             ]
         )->assignRole('patient');
 

@@ -25,10 +25,15 @@ Route::get('/', function () {
 
 Route::namespace('App\Http\Controllers\Api')->group(function (){
 
+    Route::get('/patientReport','ReportController@patientReportXLS')->middleware(['auth:api','role_or_permission:admin|reports.patients']);
+    Route::post('/patientReportByBranchOffice','ReportController@patientBrachOfficeReportXLS');
+    Route::get('/reportDates/{id}','ReportController@reportsDates');
+
     Route::post('/dateFilter','DateController@indexFilter')->name('date.index')->middleware(['auth:api','role_or_permission:admin|date.index']);
     Route::post('/date','DateController@store')->name('date.store')->middleware(['auth:api','role_or_permission:admin|date.store']);
     Route::post('/lockDate','DateController@lockDates')->name('date.lock')->middleware(['auth:api','role_or_permission:admin|date.lock']);
     Route::get('/date','DateController@index');
+    Route::post('/patientsByService','DateController@patientsByService');
 
     Route::post('/paypal/link/{sale}','DateController@paymentPaypal');
     Route::post('/stripe/link/{sale}','DateController@paymentStripe');
@@ -69,8 +74,6 @@ Route::namespace('App\Http\Controllers\Api')->group(function (){
     Route::get('/paypal/status/{saleInfo}', 'DateController@payPalStatus');
     Route::get('/paypal/status', 'PaymentController@payPalStatus');
 
-
-    Route::get('/reportDates/{id}','ReportController@reportsDates');
     Route::get('/gains','ReportController@gains');
 
     Route::get('/sales','SaleController@index');
