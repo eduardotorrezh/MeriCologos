@@ -22,7 +22,11 @@ class SaleController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(Sale::with(['datesInfo','sale_info','user_id','user_id.branchOffice'])->get());
+        $sales = Sale::with(['datesInfo', 'sale_info', 'user_id', 'user_id.branchOffice'])->get();
+        foreach ($sales as $value) {
+            $dateFormat = date('Y-m-d', strtotime($value->created_at));;
+            $value->date = $dateFormat;
+        }
+        return $this->successResponse($sales);
     }
-
 }

@@ -10,11 +10,10 @@ class Sale extends Model
     use HasFactory;
 
     protected $fillable = [
-        'date_info_id','user_id','amount','sale_info_id'
+        'date_info_id','user_id','amount','sale_info_id','created_at'
     ];
 
     protected $hidden = [
-        'created_at',
         'updated_at'
     ];
 
